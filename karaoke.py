@@ -26,8 +26,7 @@ if __name__ == "__main__":
             if clave != "element":
                 lista_atributos += ("\t", clave," = ", atributo, " ")
             if clave == "src" and not atributo.find("http://"):
-                print("HASTA AQUI: " + atributo)
-                urlretrieve(atributo, "local_file.rt")
+                urlretrieve(atributo, atributo.split("/")[-1])
         print(etiquetas["element"], "".join(lista_atributos))
-
+#       CREA ARCHIVO JSON
     json.dump([sHandler.lista_etiquetas], open("karaoke.json", "w"))
