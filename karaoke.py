@@ -9,24 +9,38 @@ import sys
 import smallsmilhandler
 
 
+class KaraokeLocal(object):
+
+    def __init__(self, file):
+        parser = make_parser()
+        sHandler = smallsmilhandler.SmallSMILHandler()
+        parser.setContentHandler(sHandler)
+        parser.parse(file)
+        self.etiquetas =  sHandler.get_tags()
+
+    def __str__(self):
+        for etiquetas in self.etiquetas:
+            lista_atributos = []
+            for clave, atributo in etiquetas.items():
+                if clave != "element" and atributo != "":
+                    lista_atributos += ("\t", clave," = ", atributo, " ")
+            print(etiquetas["element"], "".join(lista_atributos))
+
+    def to_json(self):
+        json.dump([self.etiquetas], open("karaoke.json", "w"))
+
+    def do_local(self):
+        for etiquetas in self.etiquetas:
+            for clave, atributo in etiquetas.items():
+                if clave == "src" and not atributo.find("http://"):
+                    urlretrieve(atributo, atributo.split("/")[-1])
+
 if __name__ == "__main__":
-    parser = make_parser()
-    sHandler = smallsmilhandler.SmallSMILHandler()
-    parser.setContentHandler(sHandler)
-    url = ""
     try:
-        parser.parse(open(sys.argv[1]))
+        fichero = KaraokeLocal(sys.argv[1])
     except IndexError:
         sys.exit("Usage: python3 karaoke.py file.smil")
 
-    for etiquetas in sHandler.lista_etiquetas:
-        lista_atributos = []
-
-        for clave, atributo in etiquetas.items():
-            if clave != "element":
-                lista_atributos += ("\t", clave," = ", atributo, " ")
-            if clave == "src" and not atributo.find("http://"):
-                urlretrieve(atributo, atributo.split("/")[-1])
-        print(etiquetas["element"], "".join(lista_atributos))
-#       CREA ARCHIVO JSON
-    json.dump([sHandler.lista_etiquetas], open("karaoke.json", "w"))
+    fichero.__str__()
+    fichero.to_json()
+    fichero.do_local()
