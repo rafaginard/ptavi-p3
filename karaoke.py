@@ -3,7 +3,7 @@
 
 from xml.sax import make_parser
 from xml.sax.handler import ContentHandler
-from  urllib.request import urlretrieve
+from urllib.request import urlretrieve
 import json
 import sys
 import smallsmilhandler
@@ -16,18 +16,18 @@ class KaraokeLocal(object):
         sHandler = smallsmilhandler.SmallSMILHandler()
         parser.setContentHandler(sHandler)
         parser.parse(fichero)
-        self.etiquetas =  sHandler.get_tags()
+        self.etiquetas = sHandler.get_tags()
 
     def __str__(self):
         for etiquetas in self.etiquetas:
             lista_atributos = []
             for etiqueta in etiquetas:
                 if etiqueta != "element" and etiquetas[etiqueta] != "":
-                    lista_atributos += ("\t", etiqueta,'="',
-                                        etiquetas[etiqueta],'"')
+                    lista_atributos += ("\t", etiqueta, '="',
+                                        etiquetas[etiqueta], '"')
             print(etiquetas["element"], "".join(lista_atributos))
 
-    def to_json(self, fichero, jfichero = ""):
+    def to_json(self, fichero, jfichero=""):
         if jfichero == "":
             jfichero = fichero.split(".")[0] + ".json"
         json.dump([self.etiquetas], open(jfichero, "w"))
@@ -35,7 +35,8 @@ class KaraokeLocal(object):
     def do_local(self):
         for etiquetas in self.etiquetas:
             for etiqueta in etiquetas:
-                if etiqueta == "src" and not etiquetas[etiqueta].find("http://"):
+                if etiqueta == "src"
+                and not etiquetas[etiqueta].find("http://"):
                     urlretrieve(etiquetas[etiqueta],
                                 etiquetas[etiqueta].split("/")[-1])
                     etiquetas[etiqueta] = etiquetas[etiqueta].split("/")[-1]
@@ -49,4 +50,5 @@ if __name__ == "__main__":
     fichero.__str__()
     fichero.to_json(sys.argv[1])
     fichero.do_local()
+    fichero.to_json(sys.argv[1], "local.json")
     fichero.__str__()
