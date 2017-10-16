@@ -12,6 +12,7 @@ import smallsmilhandler
 class KaraokeLocal(object):
 
     def __init__(self, fichero):
+        """Parsea el fichero"""
         parser = make_parser()
         sHandler = smallsmilhandler.SmallSMILHandler()
         parser.setContentHandler(sHandler)
@@ -19,6 +20,8 @@ class KaraokeLocal(object):
         self.etiquetas = sHandler.get_tags()
 
     def __str__(self):
+        """Imprime las etiquetas del fichero y sus atributos sólo si estos
+            tienen valor"""
         for etiquetas in self.etiquetas:
             lista_atributos = []
             for etiqueta in etiquetas:
@@ -28,11 +31,13 @@ class KaraokeLocal(object):
             print(etiquetas["element"], "".join(lista_atributos))
 
     def to_json(self, fichero, jfichero=""):
+        """Transforma el fichero a .json"""
         if jfichero == "":
             jfichero = fichero.split(".")[0] + ".json"
         json.dump([self.etiquetas], open(jfichero, "w"))
 
     def do_local(self):
+        """Se descarga los archivos"""
         for etiquetas in self.etiquetas:
             for etiqueta in etiquetas:
                 if etiqueta == "src" and not etiquetas[etiqueta].find("http"):
