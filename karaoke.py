@@ -35,8 +35,7 @@ class KaraokeLocal(object):
     def do_local(self):
         for etiquetas in self.etiquetas:
             for etiqueta in etiquetas:
-                if etiqueta == "src"
-                and not etiquetas[etiqueta].find("http://"):
+                if etiqueta == "src" and not etiquetas[etiqueta].find("http"):
                     urlretrieve(etiquetas[etiqueta],
                                 etiquetas[etiqueta].split("/")[-1])
                     etiquetas[etiqueta] = etiquetas[etiqueta].split("/")[-1]
@@ -44,7 +43,7 @@ class KaraokeLocal(object):
 if __name__ == "__main__":
     try:
         fichero = KaraokeLocal(sys.argv[1])
-    except IndexError:
+    except (ValueError, IndexError):
         sys.exit("Usage: python3 karaoke.py file.smil")
 
     fichero.__str__()
