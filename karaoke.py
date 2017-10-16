@@ -11,29 +11,34 @@ import smallsmilhandler
 
 class KaraokeLocal(object):
 
-    def __init__(self, file):
+    def __init__(self, fichero):
         parser = make_parser()
         sHandler = smallsmilhandler.SmallSMILHandler()
         parser.setContentHandler(sHandler)
-        parser.parse(file)
+        parser.parse(fichero)
         self.etiquetas =  sHandler.get_tags()
 
     def __str__(self):
         for etiquetas in self.etiquetas:
             lista_atributos = []
-            for clave, atributo in etiquetas.items():
-                if clave != "element" and atributo != "":
-                    lista_atributos += ("\t", clave," = ", atributo, " ")
+            for etiqueta in etiquetas:
+                if etiqueta != "element" and etiquetas[etiqueta] != "":
+                    lista_atributos += ("\t", etiqueta,'="',
+                                        etiquetas[etiqueta],'"')
             print(etiquetas["element"], "".join(lista_atributos))
 
-    def to_json(self):
-        json.dump([self.etiquetas], open("karaoke.json", "w"))
+    def to_json(self, fichero, jfichero = ""):
+        if jfichero == "":
+            jfichero = fichero.split(".")[0] + ".json"
+        json.dump([self.etiquetas], open(jfichero, "w"))
 
     def do_local(self):
         for etiquetas in self.etiquetas:
-            for clave, atributo in etiquetas.items():
-                if clave == "src" and not atributo.find("http://"):
-                    urlretrieve(atributo, atributo.split("/")[-1])
+            for etiqueta in etiquetas:
+                if etiqueta == "src" and not etiquetas[etiqueta].find("http://"):
+                    urlretrieve(etiquetas[etiqueta],
+                                etiquetas[etiqueta].split("/")[-1])
+                    etiquetas[etiqueta] = etiquetas[etiqueta].split("/")[-1]
 
 if __name__ == "__main__":
     try:
@@ -42,5 +47,6 @@ if __name__ == "__main__":
         sys.exit("Usage: python3 karaoke.py file.smil")
 
     fichero.__str__()
-    fichero.to_json()
+    fichero.to_json(sys.argv[1])
     fichero.do_local()
+    fichero.__str__()
